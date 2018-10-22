@@ -1,0 +1,22 @@
+{
+  "name": "inventorydb",
+  "version": "1.0.0",
+  "description": "",
+  "main": "inventory.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/raywon123/inventorydb.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/raywon123/inventorydb/issues"
+  },
+  "homepage": "https://github.com/raywon123/inventorydb#readme",
+  "dependencies": {
+    "mysql": "^2.16.0"
+  }
+}
