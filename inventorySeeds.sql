@@ -16,7 +16,7 @@ values
 ("Web Design with HTML, CSS, JavaScript and jQuery Set", "Books", "56.86", "556"),
 ("OCA Oracle Database SQL Exam Guide", "Books", "34.59", "120" ),
 ("Fantastic Beasts", "Movies", "15.00", "749"),
-("Black Pather", "Movies", "33.49", "1190"),
+("Black Panther", "Movies", "33.49", "1190"),
 ("AVENGERS: INFINITY WAR", "Movies", "33.49", "2200"),
 ("Instant Pot", "Home & Kitchen", "119.95", "201"),
 ("Electric Kettle", "Home & Kitchen", "99.95", "392"),

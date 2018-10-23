@@ -1,4 +1,5 @@
-var mysql = require("mysql");
+const mysql = require("mysql");
+const inquirer = require('inquirer');
 
 var connection = mysql.createConnection({
     host: "192.168.1.13",
@@ -32,11 +33,12 @@ connection.connect(function (err) {
     // deleteProduct();
 
     // -- after
-    queryProducts();
-    connection.end();
+    // queryProducts();
+    // connection.end();
+
 });
 
-// ----- belows are the functions for data layer
+// ----- below are the functions for data layer
 
 // function for query product
 function queryProducts() {
@@ -46,6 +48,8 @@ function queryProducts() {
         // Log all results of the SELECT statement
         // console.log(res);
         displayProducts(res);
+        askWhichToChoose(res);
+        connection.end();
     });
 }
 
@@ -93,7 +97,7 @@ function updateProduct() {
     console.log(query.sql);
 }
 
-// function for delete product
+// function for delete product 
 function deleteProduct() {
     console.log("Deleting ...\n");
     connection.query(
@@ -109,10 +113,43 @@ function deleteProduct() {
 }
 
 // function to display products
-let displayProducts = (obj) => {
+const displayProducts = (obj) => {
     // console.log(obj.length);
     obj.forEach(e => {
         console.log(
-           `${e.item_id} | ${e.product_name}  | ${e.price}  | ${e.stock_quantity}`);
+            `${e.item_id} | ${e.department_name} | ${e.product_name}  | $${e.price}  | ${e.stock_quantity}`);
+    })
+}
+
+// -- below are the functions for inquirer
+
+// function to ask which item to buy
+function askWhichToChoose(res) {
+    inquirer.prompt([{
+        type: 'input',
+        message: 'Which Item Do You Want to Buy?',
+        name: 'id'
+    }]).then(response => {
+
+        let arrayid = parseInt(response.id) - 1;
+        let item = res[arrayid];
+        console.log(`You have chosen: 
+(${item.department_name}) - ${item.product_name} -  $${item.price} each.`);
+
+        askHowMany();
+
+    })
+}
+
+// function to ask how many to buy
+function askHowMany() {
+    inquirer.prompt([{
+        type: 'input',
+        message: 'How Many Do You Want to Buy?',
+        name: 'number'
+    }]).then(response => {
+
+        let num = parseInt(response.number);
+        console.log(`Awesome, you want to buy ${num}.`);
     })
 }
