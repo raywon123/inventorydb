@@ -1,5 +1,10 @@
 ## InventoryDB
 
+#### npm packages used: 
+
+* mysql
+* inquirer
+* table-layout
 
 #### Future Improvement
 

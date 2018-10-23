@@ -6,6 +6,8 @@ const formatter = new Intl.NumberFormat('en-US', {
     minimumFractionDigits: 2
 });
 
+const Table = require('table-layout');
+
 var connection = mysql.createConnection({
     host: "192.168.1.13",
 
@@ -26,21 +28,18 @@ connection.connect(function (err) {
     if (err) throw err;
     // console.log("connected as id " + connection.threadId + "\n");
 
-    // -- before
+    // -- select from database
     queryProducts();
 
-    // -- create product
+    // -- insert product into database
     // createProduct();
 
-    // -- update product
+    // -- update product to database
     // updateProduct();
 
-    // -- delete product
+    // -- delete product from database
     // deleteProduct();
 
-    // -- after
-    // queryProducts();
-    
 });
 
 // ----- below are the functions for data layer
@@ -55,7 +54,7 @@ function queryProducts() {
         // console.log(res);
         displayProducts(res);
         askWhichToChoose(res);
-       
+
     });
 }
 
@@ -120,13 +119,26 @@ function deleteProduct() {
     );
 }
 
-// function to display products
+// function to display products - using 'table-layout' npm package
 const displayProducts = (obj) => {
-    // console.log(obj.length);
-    obj.forEach(e => {
-        console.log(
-            `${e.item_id} | ${e.department_name} | ${e.product_name}  | $${e.price}  | ${e.stock_quantity}`);
-    })
+
+    // obj.forEach(e => {
+    //     console.log(
+    //         `${e.item_id} | ${e.department_name} | ${e.product_name}  | $${e.price}  | ${e.stock_quantity}`);
+    // })
+
+    let columnName = {
+        item_id: 'ID',
+        product_name: 'Product Name .......................................',
+        department_name: 'Department ...',
+        price: 'Price',
+        stock_quantity: 'Quantity'
+    };
+
+    let col = new Table(columnName);
+    let table = new Table(obj, { maxWidth: 100 });
+    console.log(col.toString());
+    console.log(table.toString());
 }
 
 // -- below are the functions for inquirer
@@ -135,18 +147,24 @@ const displayProducts = (obj) => {
 function askWhichToChoose(res) {
     inquirer.prompt([{
         type: 'input',
-        message: 'Which Item Do You Want to Buy?',
+        message: 'Which Item Do You Want to Buy? (Please enter ID number)',
         name: 'id'
     }]).then(response => {
 
         let arrayid = parseInt(response.id) - 1;
-        let item = res[arrayid];
-        console.log(`
+        if (res[arrayid] == null) {
+            console.log("You have chosen an incorrect product ID. Please Try again.");
+            askWhichToChoose(res);
+        }
+        else {
+            let item = res[arrayid];
+            console.log(`
        You have chosen: 
-       (${item.department_name}) - ${item.product_name} -  ${formatter.format(item.price)} each.
+       (${item.department_name}) - ${item.product_name} -  ${formatter.format(item.price)} each
        `);
 
-        askHowMany(item);
+            askHowMany(item);
+        }
 
     })
 }
@@ -156,14 +174,21 @@ function askHowMany(item) {
     inquirer.prompt([{
         type: 'input',
         message: 'How Many Do You Want to Buy?',
-        name: 'number'
+        name: 'number',
+        validate: function (value) {
+            var valid = false;
+            if (!isNaN(parseFloat(value)) && parseFloat(value) > 0) {
+                valid = true ;
+            }    
+            return valid || "Please enter a positive number and not a 0.";
+        }
     }]).then(response => {
 
         let num = parseInt(response.number);
         let total = item.price * num;
         let inventory = item.stock_quantity - num;
         if (inventory > 0) {
-            confirmSale(item.item_id, inventory, total);
+            confirmOrder(item.item_id, inventory, total);
         }
         else {
             console.log(`Insufficient quantities to fill your order. We have ${item.stock_quantity} in stock.`);
@@ -172,8 +197,8 @@ function askHowMany(item) {
     })
 }
 
-// function to ask how many to buy
-function confirmSale(id, num, total) {
+// function to ask for order confirmation
+function confirmOrder(id, num, total) {
 
     inquirer.prompt([{
         type: 'confirm',
@@ -196,7 +221,7 @@ function confirmSale(id, num, total) {
     })
 }
 
-// function to continue to shop
+// function to ask if continue to shop
 function askToContinue() {
 
     inquirer.prompt([{
