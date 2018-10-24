@@ -9,8 +9,8 @@ const formatter = new Intl.NumberFormat('en-US', {
 const Table = require('table-layout');
 
 var connection = mysql.createConnection({
-    // host: "192.168.1.13",
-    host: "localhost",
+    host: "192.168.1.13",
+    // host: "localhost",
 
     // Your port; if not 3306
     port: 3306,
@@ -26,6 +26,7 @@ var connection = mysql.createConnection({
 });
 
 
+// -- main program
 // -- database connect
 connection.connect(function (err) {
     if (err) throw err;
@@ -178,26 +179,34 @@ function askWhichToChoose(res) {
 function askHowMany(item) {
     inquirer.prompt([{
         type: 'input',
-        message: 'How Many Do You Want to Buy?',
+        message: 'How Many?',
         name: 'number',
         validate: function (value) {
             var valid = false;
             if (!isNaN(parseFloat(value)) && parseFloat(value) > 0) {
-                valid = true ;
-            }    
-            return valid || "Please enter a positive number and not a 0.";
+                valid = true;
+            }
+            return valid || "Please enter a positive number and not a 0. You can cancel the order in next prompt.";
         }
     }]).then(response => {
 
         let num = parseInt(response.number);
         let total = item.price * num;
         let inventory = item.stock_quantity - num;
-        if (inventory > 0) {
-            confirmOrder(item.item_id, inventory, total);
+
+        // -- final inventory zero is acceptable.
+        if (item.stock_quantity === 0) {
+            console.log("Sorry, we don't have any in stock.\n");
+            askToContinue();
         }
         else {
-            console.log(`Insufficient quantities to fill your order. We have ${item.stock_quantity} in stock.`);
-            askHowMany(item);
+            if (inventory > -1) {
+                confirmOrder(item.item_id, inventory, total);
+            }
+            else {
+                console.log(`Insufficient quantities to fill your order. We have ${item.stock_quantity} in stock.`);
+                askHowMany(item);
+            }
         }
     })
 }

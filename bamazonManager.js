@@ -9,8 +9,8 @@ const formatter = new Intl.NumberFormat('en-US', {
 const Table = require('table-layout');
 
 var connection = mysql.createConnection({
-    // host: "192.168.1.13",
-    host: "localhost",
+    host: "192.168.1.13",
+    // host: "localhost",
 
     // Your port; if not 3306
     port: 3306,
@@ -26,6 +26,7 @@ var connection = mysql.createConnection({
 });
 
 
+// -- main program
 // -- database connect
 connection.connect(function (err) {
     if (err) throw err;
@@ -51,9 +52,27 @@ connection.connect(function (err) {
 // ----- below are the functions for data layer
 
 // function for query product
-function queryProducts() {
+function queryProducts(isQuery) {
 
     connection.query("SELECT * FROM products", function (err, res) {
+        if (err) throw err;
+        // Log all results of the SELECT statement
+        // console.log(res);
+        displayProducts(res);
+        if (isQuery) {
+            askToContinue();
+        }
+        else {
+            askWhichToChoose(res);
+        }
+
+    });
+}
+
+// function for query product
+function queryLowInv() {
+
+    connection.query("SELECT * FROM products WHERE stock_quantity < 5", function (err, res) {
         if (err) throw err;
         // Log all results of the SELECT statement
         // console.log(res);
@@ -64,24 +83,26 @@ function queryProducts() {
 }
 
 // function for create product
-function createProduct() {
+function createProduct(name, department, price, quantity) {
     console.log("Inserting a new product...\n");
     var query = connection.query(
         "INSERT INTO products SET ?",
         {
-            product_name: "Samsung Flat 55 4k TV",
-            department_name: "Electronic",
-            price: 547.99,
-            stock_quantity: 50
+            product_name: name,
+            department_name: department,
+            price: price,
+            stock_quantity: quantity
         },
         function (err, res) {
             if (err) throw err;
             console.log(res.affectedRows + " product inserted!\n");
+            askToContinue();
         }
     );
 
     // logs the actual query being run
-    console.log(query.sql);
+    // console.log(query.sql);
+    query.sql;
 }
 
 // function for update product
@@ -134,16 +155,22 @@ const displayProducts = (obj) => {
 
     let columnName = {
         item_id: 'ID',
-        product_name: 'Product Name .......................................',
-        department_name: 'Department ...',
+        product_name: 'Product Name',
+        department_name: 'Department',
         price: 'Price',
         stock_quantity: 'Quantity'
     };
 
-    let col = new Table(columnName);
+    let col = new Table(columnName, { maxWidth: 100 });
     let table = new Table(obj, { maxWidth: 100 });
+    // let table = new Table(obj, { maxWidth: 100, padding: {left: "  "} });
+    // let table = new Table(obj, { columns: [{item_id: {padding: {left: "   "}}}] });
+    console.log("");
     console.log(col.toString());
+    console.log("------------------------------------------------------------------------------------------");
     console.log(table.toString());
+
+
 }
 
 // -- below are the functions for inquirer
@@ -152,7 +179,7 @@ const displayProducts = (obj) => {
 function askWhichToChoose(res) {
     inquirer.prompt([{
         type: 'input',
-        message: 'Which Item Do You Want to Buy? (Please enter ID number)',
+        message: 'Which Item Do You Want to Update The Quantity? (Please enter ID number)',
         name: 'id'
     }]).then(response => {
 
@@ -165,66 +192,15 @@ function askWhichToChoose(res) {
             let item = res[arrayid];
             console.log(`
        You have chosen: 
-       (${item.department_name}) - ${item.product_name} -  ${formatter.format(item.price)} each
+       (${item.department_name}) - ${item.product_name} - Quantity: ${item.stock_quantity}
        `);
 
-            askHowMany(item);
+            askUpdateQuantity(item);
         }
 
     })
 }
 
-// function to ask how many to buy
-function askHowMany(item) {
-    inquirer.prompt([{
-        type: 'input',
-        message: 'How Many Do You Want to Buy?',
-        name: 'number',
-        validate: function (value) {
-            var valid = false;
-            if (!isNaN(parseFloat(value)) && parseFloat(value) > 0) {
-                valid = true;
-            }
-            return valid || "Please enter a positive number and not a 0.";
-        }
-    }]).then(response => {
-
-        let num = parseInt(response.number);
-        let total = item.price * num;
-        let inventory = item.stock_quantity - num;
-        if (inventory > 0) {
-            confirmOrder(item.item_id, inventory, total);
-        }
-        else {
-            console.log(`Insufficient quantities to fill your order. We have ${item.stock_quantity} in stock.`);
-            askHowMany(item);
-        }
-    })
-}
-
-// function to ask for order confirmation
-function confirmOrder(id, num, total) {
-
-    inquirer.prompt([{
-        type: 'confirm',
-        message: `Confirm Order: Total Cost is ${formatter.format(total)} :`,
-        name: 'buy'
-    }]).then(response => {
-
-        if (response.buy) {
-            console.log(`
-        Order Confirmed. Your confirmation number is XXXXXXXXXXXX.
-            `);
-            updateProduct(id, num);
-            // -- hook for adding customer order table
-            // createOrder(cust_id, prod_id, prod_price, num);
-        }
-        else {
-            console.log("Order Cancelled");
-            askToContinue();
-        }
-    })
-}
 
 // function to ask if continue to shop
 function askToContinue() {
@@ -258,29 +234,136 @@ function displayChoices() {
             "View Products For Sale",
             "View Low Inventory",
             "Add To Inventory",
-            "Add New Product"
+            "Add A New Product"
         ]
     }]).then(response => {
+
+        let isQuery = true;
 
         switch (response.myChoice) {
 
             case "View Products For Sale":
-               queryProducts();
-               
-            default: 
-               break;
+                isQuery = true;
+                queryProducts(isQuery);
+                break;
+
+            case "View Low Inventory":
+                queryLowInv();
+                break;
+
+            case "Add To Inventory":
+                isQuery = false;
+                queryProducts(isQuery);
+                break;
+
+            case "Add A New Product":
+                askAboutNewItem();
+                break;
+
+            default:
+                break;
         }
-        // if (response.myChoice === "View Products For Sale") {     
-        //     queryProducts();
-        // }
-        // if (response.myChoice === "View Low Inventory") {     
-        //     queryProducts();
-        // }
-        // if (response.myChoice === "View Low Inventory") {     
-        //     queryProducts();
-        // }
-        // if (response.myChoice === "View Low Inventory") {     
-        //     queryProducts();
-        // }
+
     })
 }
+
+
+// function to ask for update quantity
+function askUpdateQuantity(item) {
+    inquirer.prompt([{
+        type: 'input',
+        message: 'How Many Do You Want to Add?',
+        name: 'number',
+        validate: function (value) {
+            var valid = false;
+            if (!isNaN(parseFloat(value)) && parseFloat(value) > -1) {
+                valid = true;
+            }
+            return valid || "Please enter a positive number.";
+        }
+    }]).then(response => {
+
+        let num = parseInt(response.number);
+        let inventory = item.stock_quantity + num;
+        if (inventory < 10000) {
+            confirmUpdate(item.item_id, inventory);
+        }
+        else {
+            console.log(`There will be too much (> 10,000) in inventory. We have ${item.stock_quantity} in stock and you are adding ${num}.`);
+            askUpdateQuantity(item);
+        }
+    })
+}
+
+// function to ask for order confirmation
+function confirmUpdate(id, num) {
+
+    inquirer.prompt([{
+        type: 'confirm',
+        message: `Confirm Adding To Inventory - The Final Quantity is ${num} :`,
+        name: 'isUpdated'
+    }]).then(response => {
+
+        if (response.isUpdated) {
+            console.log(`
+        The database has been updated. Your tracking number is XXXXXXXXXXXX.
+            `);
+            updateProduct(id, num);
+            // -- hook for adding vendor order table
+            // createVendorOrder(vendor_id, prod_id, prod_price, num);
+        }
+        else {
+            console.log("Cancelled");
+            askToContinue();
+        }
+    })
+}
+
+// function to ask about a new product that is to be added to database
+function askAboutNewItem() {
+    inquirer.prompt([{
+        type: 'input',
+        message: 'Product Name?',
+        name: 'name'
+    },
+    {
+        type: "list",
+        message: "Department Options (Choose One Below): ",
+        name: "department",
+        choices: [
+            "Books",
+            "Movies",
+            "Home & Kitchen",
+            "Electronic"
+        ]
+    },   
+    {
+        type: 'input',
+        message: 'Price?',
+        name: 'price',
+        validate: function (value) {
+            var valid = false;
+            if (!isNaN(parseFloat(value)) && parseFloat(value) > -1) {
+                valid = true;
+            }
+            return valid || "Please enter a positive number.";
+        }
+    },
+    {
+        type: 'input',
+        message: 'Quantity?',
+        name: 'quantity',
+        validate: function (value) {
+            var valid = false;
+            if (!isNaN(parseFloat(value)) && parseFloat(value) > -1) {
+                valid = true;
+            }
+            return valid || "Please enter a positive number.";
+        }
+    }]).then(res => {
+
+        createProduct(res.name, res.department, res.price, res.quantity);
+
+    })
+}
+

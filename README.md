@@ -1,12 +1,20 @@
 ## InventoryDB
 
+
 #### npm packages used: 
 
 * mysql
 * inquirer
 * table-layout
+* formatter
 
-#### Future Improvement
+#### Technology:
+
+* Using MySQL database
+* Using inquirer and add validation functions
+
+
+#### Future Improvement:
 
 Customer View:
 
@@ -21,5 +29,12 @@ timestamp in the table.
 
 * Create a shopping cart to keep all the orders all at once before checkout.
 
+* Tune the console output table to be a better format.
 
- 
+ Manager View:
+
+ * Adding update price feature
+
+ * Adding remove product feature
+
+ * Tune the console output table to be a better format.

@@ -23,5 +23,5 @@ values
 ("Instant Pot", "Home & Kitchen", "119.95", "201"),
 ("Electric Kettle", "Home & Kitchen", "99.95", "392"),
 ("Cuisinart Programmable Thermal Coffeemaker", "Home & Kitchen", "94.55", "122"),
-("Bluetooth Headphones", "Electronic", "25.99", "82"),
+("Bluetooth Headphones", "Electronic", "25.99", "4"),
 ("TaoTronics Bluetooth Transmitter and Receiver", "Electronic", "41.99", "62");
