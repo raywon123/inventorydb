@@ -25,46 +25,46 @@ This program simulates a store front operation. There are two programs: one for 
 
 ## Detail description:
 
-  1) Customer View:
+ #### Customer View:
      
-    a) A typical sale.
+  a) A typical sale.
        It will show all products on sale.
        Then the customer chooses the product and quantity.
        Then it will ask for confirmation.
        Then it will put in the order and deduct the quantity in inventory.
 
 
-     ![alt text](/images/customer1-order.png?raw=true "A Typical Sale") 
+   ![alt text](/images/customer1-order.png?raw=true "A Typical Sale") 
 
-    b) Case when there is not enough quantity.
+   b) Case when there is not enough quantity.
 
-     ![alt text](/images/customer2-not.png?raw=true "Not enough quantity") 
+   ![alt text](/images/customer2-not.png?raw=true "Not enough quantity") 
   
-    c) Customer cancels order.
+   c) Customer cancels order.
 
-     ![alt text](/images/customer3-cancel.png?raw=true "Customer cancels") 
+   ![alt text](/images/customer3-cancel.png?raw=true "Customer cancels") 
 
-  2) Manager View:
+  #### Manager View:
 
-    a) Showing the Manager Menu:
+   a) Showing the Manager Menu:
 
-      ![alt text](/images/manager1-menu.png?raw=true "Menu") 
+   ![alt text](/images/manager1-menu.png?raw=true "Menu") 
 
-    b) View the inventory.
+   b) View the inventory.
 
-     ![alt text](/images/manager2-view.png?raw=true "Inventory View") 
+   ![alt text](/images/manager2-view.png?raw=true "Inventory View") 
 
-    c) Find low inventory product (less than 5).
+   c) Find low inventory product (less than 5).
 
-     ![alt text](/images/manager3-low.png?raw=true "Low Quantity") 
+   ![alt text](/images/manager3-low.png?raw=true "Low Quantity") 
   
-    d) Update quantity
+   d) Update quantity
 
-     ![alt text](/images/manager4-update.png?raw=true "Update Quantity") 
+   ![alt text](/images/manager4-update.png?raw=true "Update Quantity") 
     
-    e) Enter a new product into database
+  e) Enter a new product into database
 
-     ![alt text](/images/manager5-new.png?raw=true "New Product") 
+   ![alt text](/images/manager5-new.png?raw=true "New Product") 
     
 -----------------------------------------------------------------------
 
