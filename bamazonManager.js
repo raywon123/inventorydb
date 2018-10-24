@@ -31,11 +31,11 @@ connection.connect(function (err) {
     if (err) throw err;
     // console.log("connected as id " + connection.threadId + "\n");
 
-    console.log("    ~~  Welcome To Amazing Online Store! ~~")
-    console.log("        Showing All Products For Sale ...\n");
+    console.log("\n    ~~  Welcome To Amazing Online Store! (Manager View) ~~\n");
+    displayChoices();
 
     // -- select from database
-    queryProducts();
+    // queryProducts();
 
     // -- insert product into database
     // createProduct();
@@ -58,7 +58,7 @@ function queryProducts() {
         // Log all results of the SELECT statement
         // console.log(res);
         displayProducts(res);
-        askWhichToChoose(res);
+        askToContinue();
 
     });
 }
@@ -183,8 +183,8 @@ function askHowMany(item) {
         validate: function (value) {
             var valid = false;
             if (!isNaN(parseFloat(value)) && parseFloat(value) > 0) {
-                valid = true ;
-            }    
+                valid = true;
+            }
             return valid || "Please enter a positive number and not a 0.";
         }
     }]).then(response => {
@@ -231,18 +231,56 @@ function askToContinue() {
 
     inquirer.prompt([{
         type: 'confirm',
-        message: 'Do You Want To Continue Shopping?',
+        message: 'Do You Want To Continue?',
         name: 'decision'
     }]).then(response => {
 
         if (response.decision) {
             console.log('Great, Welcome Back.');
-            queryProducts();
+            displayChoices();
         }
         else {
-            console.log("Thank You For Shopping. Come Back Next Time. Good-bye.");
+            console.log("Good-bye.");
             connection.end();
             process.exit();
         }
+    })
+}
+
+// function to show choices when begin
+function displayChoices() {
+
+    inquirer.prompt([{
+        type: "list",
+        message: "Menu Options: ",
+        name: "myChoice",
+        choices: [
+            "View Products For Sale",
+            "View Low Inventory",
+            "Add To Inventory",
+            "Add New Product"
+        ]
+    }]).then(response => {
+
+        switch (response.myChoice) {
+
+            case "View Products For Sale":
+               queryProducts();
+               
+            default: 
+               break;
+        }
+        // if (response.myChoice === "View Products For Sale") {     
+        //     queryProducts();
+        // }
+        // if (response.myChoice === "View Low Inventory") {     
+        //     queryProducts();
+        // }
+        // if (response.myChoice === "View Low Inventory") {     
+        //     queryProducts();
+        // }
+        // if (response.myChoice === "View Low Inventory") {     
+        //     queryProducts();
+        // }
     })
 }
