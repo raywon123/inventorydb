@@ -17,15 +17,15 @@ This program simulates a store front operation. There are two programs: one for 
 
   Customer View:
 
-  $ node bamazonCustomer.js
+        $ node bamazonCustomer.js
 
   Manager View:
 
-  $ node bamazonManager.js
+        $ node bamazonManager.js
 
 ## Detail description:
 
- #### Customer View:
+ ### Customer View:
      
   a) A typical sale.
        It will show all products on sale.
@@ -44,7 +44,7 @@ This program simulates a store front operation. There are two programs: one for 
 
    ![alt text](/images/customer3-cancel.png?raw=true "Customer cancels") 
 
-  #### Manager View:
+  ### Manager View:
 
    a) Showing the Manager Menu:
 
@@ -84,7 +84,7 @@ This program simulates a store front operation. There are two programs: one for 
 
 ## Future Improvement:
 
-1) Customer View:
+#### Customer View:
 
 * Create customer profile table to track name and address.
 
@@ -99,7 +99,7 @@ timestamp in the table.
 
 * Tune the console output table to be a better format.
 
-2) Manager View:
+#### Manager View:
 
  * Adding update price feature
 
