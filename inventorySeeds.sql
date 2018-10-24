@@ -24,4 +24,5 @@ values
 ("Electric Kettle", "Home & Kitchen", "99.95", "392"),
 ("Cuisinart Programmable Thermal Coffeemaker", "Home & Kitchen", "94.55", "122"),
 ("Bluetooth Headphones", "Electronic", "25.99", "4"),
-("TaoTronics Bluetooth Transmitter and Receiver", "Electronic", "41.99", "62");
+("TaoTronics Bluetooth Transmitter and Receiver", "Electronic", "41.99", "62"),
+("Star Wars: The Force Awakens", "Movies", "21.34", "0");
